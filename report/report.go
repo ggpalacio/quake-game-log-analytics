@@ -6,12 +6,12 @@ import (
 	"github.com/ggpalacio/quake-game-log-analytics/logfile"
 )
 
-type GameReport map[string]*game.Game
+type Games map[string]*game.Game
 
-func New(logFile *logfile.LogFile) GameReport {
+func New(logFile *logfile.LogFile) Games {
 	var currentGame *game.Game
 	var currentGameIndex int
-	games := make(GameReport)
+	games := make(Games)
 
 	for _, logLine := range logFile.Lines {
 		if logLine.IsInitGame() {
