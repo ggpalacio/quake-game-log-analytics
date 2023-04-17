@@ -17,6 +17,20 @@ type PlayerScore struct {
 
 type Ranking []PlayerScore
 
+func (ref Ranking) Len() int {
+	return len(ref)
+}
+
+func (ref Ranking) Less(i, j int) bool {
+	return ref[i].Score > ref[j].Score
+}
+
+func (ref Ranking) Swap(i, j int) {
+	tmp := ref[i]
+	ref[i] = ref[j]
+	ref[j] = tmp
+}
+
 type ScoreByPlayer map[string]int
 
 func (ref *RankingReport) AddPlayerScore(playerName string, score int) {
@@ -39,9 +53,7 @@ func (ref *RankingReport) GetRanking() Ranking {
 		ranking[index] = PlayerScore{player, score}
 		index++
 	}
-	sort.Slice(ranking, func(i, j int) bool {
-		return ranking[i].Score > ranking[j].Score
-	})
+	sort.Sort(ranking)
 	return ranking
 }
 
