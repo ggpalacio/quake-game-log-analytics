@@ -31,8 +31,8 @@ func main() {
 		return
 	}
 
-	report := report.NewReport(logFile)
-	reportJson, _ := json.MarshalIndent(report, "", "  ")
+	rpt := report.NewReport(logFile)
+	reportJson, _ := json.MarshalIndent(rpt, "", "  ")
 	if reportFilePath != "" {
 		output, err := os.Create(reportFilePath)
 		if err != nil {

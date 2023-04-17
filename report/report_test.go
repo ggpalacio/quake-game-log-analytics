@@ -1,11 +1,16 @@
 package report_test
 
 import (
+	_ "embed"
+	"encoding/json"
 	"github.com/ggpalacio/quake-game-log-analytics/game"
 	"github.com/ggpalacio/quake-game-log-analytics/report"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
+
+//go:embed report_test.json
+var reportTestJson []byte
 
 func TestNewReport(t *testing.T) {
 	logFile := &game.LogFile{
@@ -34,7 +39,8 @@ func TestNewReport(t *testing.T) {
 	report := report.NewReport(logFile)
 	assert.Len(t, report.Matches, 1)
 
-	matchReport := report.Matches["game-1"]
+	matchReport := report.Matches[0]
+	assert.Equal(t, "game-1", matchReport.MatchID)
 	assert.Len(t, matchReport.Players, 3)
 	assert.Equal(t, -9, matchReport.Kills["Isgalamido"])
 	assert.Zero(t, matchReport.Kills["Dono da Bola"])
@@ -43,4 +49,43 @@ func TestNewReport(t *testing.T) {
 	assert.Equal(t, 9, matchReport.KillsByMeans["MOD_TRIGGER_HURT"])
 	assert.Equal(t, 3, matchReport.KillsByMeans["MOD_ROCKET_SPLASH"])
 	assert.Equal(t, 1, matchReport.KillsByMeans["MOD_FALLING"])
+}
+
+func TestReport_MarshalJSON(t *testing.T) {
+	rpt := report.Report{
+		Matches: report.MatchesReport{
+			{
+				MatchID:    "game-1",
+				Players:    report.PlayerNames{"bar", "baz", "foo"},
+				TotalKills: 10,
+				Kills: map[string]int{
+					"foo": 5,
+					"bar": 3,
+					"baz": 2,
+				},
+				KillsByMeans: map[game.DeathCause]int{
+					game.DeathCauseMachineGun: 3,
+					game.DeathCauseShotGun:    7,
+				},
+			},
+			{
+				MatchID:    "game-2",
+				Players:    report.PlayerNames{"bar", "foo"},
+				TotalKills: 12,
+				Kills: map[string]int{
+					"foo": 7,
+					"bar": 5,
+				},
+				KillsByMeans: map[game.DeathCause]int{
+					game.DeathCauseRailGun:  8,
+					game.DeathCauseChainGun: 4,
+				},
+			},
+		},
+	}
+	rpt.Ranking.AddPlayersScore(map[string]int{"foo": 12, "bar": 8, "baz": 2})
+
+	reportJSON, err := json.MarshalIndent(rpt, "", "  ")
+	assert.NoError(t, err)
+	assert.Equal(t, string(reportTestJson), string(reportJSON))
 }

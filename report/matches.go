@@ -5,11 +5,12 @@ import (
 	"sort"
 )
 
-type MatchesReport map[string]MatchReport
+type MatchesReport []MatchReport
 
 type PlayerNames []string
 
 type MatchReport struct {
+	MatchID      string                  `json:"-"`
 	Players      PlayerNames             `json:"players"`
 	TotalKills   int                     `json:"total_kills"`
 	Kills        map[string]int          `json:"kills"`
@@ -18,6 +19,7 @@ type MatchReport struct {
 
 func NewMatchReport(match *game.Match) MatchReport {
 	return MatchReport{
+		MatchID:      match.ID,
 		TotalKills:   len(match.Kills),
 		Players:      getPlayerNames(match),
 		Kills:        getKillScoreByPlayer(match),

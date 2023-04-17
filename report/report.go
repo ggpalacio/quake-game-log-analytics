@@ -1,24 +1,24 @@
 package report
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/ggpalacio/quake-game-log-analytics/game"
 )
 
 type Report struct {
-	Matches MatchesReport `json:"matches"`
-	Ranking RankingReport `json:"ranking"`
+	Matches MatchesReport
+	Ranking RankingReport
 }
 
 func NewReport(logFile *game.LogFile) Report {
-	report := Report{
-		Matches: make(map[string]MatchReport),
-	}
+	report := Report{}
 
 	matches := process(logFile)
 	for _, match := range matches {
 		matchReport := NewMatchReport(match)
-		report.Matches[match.ID] = matchReport
+		report.Matches = append(report.Matches, matchReport)
 		report.Ranking.AddPlayersScore(matchReport.Kills)
 	}
 	return report
@@ -47,4 +47,49 @@ func process(logFile *game.LogFile) []*game.Match {
 		}
 	}
 	return matches
+}
+
+func (ref Report) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	buf.WriteString("{")
+
+	if len(ref.Matches) > 0 {
+		buf.Write(ref.marshalMatches())
+	}
+	if len(ref.Ranking.GePlayerRanking()) > 0 {
+		if len(ref.Matches) > 0 {
+			buf.WriteString(",")
+		}
+		buf.Write(ref.marshalRanking())
+	}
+	buf.WriteString("}")
+	return buf.Bytes(), nil
+}
+
+func (ref Report) marshalMatches() []byte {
+	var buf bytes.Buffer
+	var index int
+	for _, match := range ref.Matches {
+		if index > 0 {
+			buf.WriteString(",")
+		}
+		buf.WriteString(fmt.Sprintf(`"%s":`, match.MatchID))
+		value, _ := json.Marshal(match)
+		buf.Write(value)
+		index++
+	}
+	return buf.Bytes()
+}
+
+func (ref Report) marshalRanking() []byte {
+	var buf bytes.Buffer
+	buf.WriteString(`"ranking":{`)
+	for index, playerRanking := range ref.Ranking.GePlayerRanking() {
+		if index > 0 {
+			buf.WriteString(",")
+		}
+		buf.WriteString(fmt.Sprintf(`"%s":%d`, playerRanking.Player, playerRanking.Score))
+	}
+	buf.WriteString("}")
+	return buf.Bytes()
 }
