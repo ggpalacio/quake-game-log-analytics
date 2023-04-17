@@ -34,7 +34,7 @@ func TestNewReport(t *testing.T) {
 	report := report.NewReport(logFile)
 	assert.Len(t, report.Matches, 1)
 
-	matchReport := report.Matches[0]
+	matchReport := report.Matches["game-1"]
 	assert.Len(t, matchReport.Players, 3)
 	assert.Equal(t, -9, matchReport.Kills["Isgalamido"])
 	assert.Zero(t, matchReport.Kills["Dono da Bola"])

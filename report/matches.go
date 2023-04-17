@@ -1,16 +1,12 @@
 package report
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"github.com/ggpalacio/quake-game-log-analytics/game"
 )
 
-type MatchesReport []MatchReport
+type MatchesReport map[string]MatchReport
 
 type MatchReport struct {
-	MatchID      string                  `json:"-"`
 	Players      []string                `json:"players"`
 	TotalKills   int                     `json:"total_kills"`
 	Kills        map[string]int          `json:"kills"`
@@ -19,7 +15,6 @@ type MatchReport struct {
 
 func NewMatchReport(match *game.Match) MatchReport {
 	return MatchReport{
-		MatchID:      match.ID,
 		TotalKills:   len(match.Kills),
 		Players:      getPlayerNames(match),
 		Kills:        getKillScoreByPlayer(match),
@@ -52,23 +47,4 @@ func countKillsByDeathCause(match *game.Match) map[game.DeathCause]int {
 		killsByDeathScore[kill.Cause]++
 	}
 	return killsByDeathScore
-}
-
-func (ref MatchesReport) MarshalJSON() ([]byte, error) {
-	var buf bytes.Buffer
-	buf.WriteString("{")
-
-	for index, report := range ref {
-		if index > 0 {
-			buf.WriteString(",")
-		}
-
-		buf.WriteString(fmt.Sprintf(`"%s":`, report.MatchID))
-
-		val, _ := json.Marshal(report)
-		buf.Write(val)
-	}
-
-	buf.WriteString("}")
-	return buf.Bytes(), nil
 }

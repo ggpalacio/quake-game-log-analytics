@@ -7,16 +7,18 @@ import (
 
 type Report struct {
 	Matches MatchesReport `json:"matches"`
-	Ranking RankingReport `json:"ranking,omitempty"`
+	Ranking RankingReport `json:"ranking"`
 }
 
 func NewReport(logFile *game.LogFile) Report {
-	var report Report
+	report := Report{
+		Matches: make(map[string]MatchReport),
+	}
 
 	matches := process(logFile)
 	for _, match := range matches {
 		matchReport := NewMatchReport(match)
-		report.Matches = append(report.Matches, matchReport)
+		report.Matches[match.ID] = matchReport
 		report.Ranking.AddPlayersScore(matchReport.Kills)
 	}
 	return report
