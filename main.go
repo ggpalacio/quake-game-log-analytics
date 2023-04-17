@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/ggpalacio/quake-game-log-analytics/logfile"
-	"github.com/ggpalacio/quake-game-log-analytics/report"
+	"github.com/ggpalacio/quake-game-log-analytics/game"
 	"os"
 	"strings"
 )
@@ -25,14 +24,14 @@ func main() {
 		return
 	}
 
-	log, err := logfile.New(logFilePath)
+	logFile, err := game.NewLogFile(logFilePath)
 	if err != nil {
 		fmt.Printf("reading file error: %v", err)
 		return
 	}
 
-	games := report.New(log)
-	reportJson, _ := json.MarshalIndent(games, "", "  ")
+	report := game.NewReport(logFile)
+	reportJson, _ := json.MarshalIndent(report, "", "  ")
 	if reportFilePath != "" {
 		output, err := os.Create(reportFilePath)
 		if err != nil {

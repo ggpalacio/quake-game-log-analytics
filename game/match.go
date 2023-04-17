@@ -2,18 +2,18 @@ package game
 
 const world = "<world>"
 
-type Game struct {
+type Match struct {
 	Players      []string       `json:"players"`
 	TotalKills   int            `json:"total_kills"`
 	Kills        map[string]int `json:"kills"`
 	KillsByMeans map[string]int `json:"kills_by_means"`
 }
 
-func (ref *Game) AddPlayer(playerName string) {
+func (ref *Match) AddPlayer(playerName string) {
 	ref.Players = append(ref.Players, playerName)
 }
 
-func (ref *Game) RegisterKill(killer, killed, deathCause string) {
+func (ref *Match) RegisterKill(killer, killed, deathCause string) {
 	if ref.Kills == nil {
 		ref.Kills = make(map[string]int)
 	}
