@@ -1,7 +1,6 @@
 package report_test
 
 import (
-	_ "embed"
 	"github.com/ggpalacio/quake-game-log-analytics/game"
 	"github.com/ggpalacio/quake-game-log-analytics/report"
 	"github.com/stretchr/testify/assert"
@@ -33,7 +32,7 @@ func TestNewMatchReport(t *testing.T) {
 	match.Kills = append(match.Kills, bar.Kills...)
 
 	matchReport := report.NewMatchReport(match)
-	assert.Equal(t, []string{"foo", "bar"}, matchReport.Players)
+	assert.Equal(t, report.PlayerNames{"bar", "foo"}, matchReport.Players)
 	assert.Equal(t, 3, matchReport.Kills["foo"])
 	assert.Equal(t, 2, matchReport.Kills["bar"])
 	assert.Equal(t, 3, matchReport.KillsByMeans[game.DeathCauseMachineGun])

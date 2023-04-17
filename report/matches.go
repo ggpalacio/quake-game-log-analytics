@@ -2,12 +2,15 @@ package report
 
 import (
 	"github.com/ggpalacio/quake-game-log-analytics/game"
+	"sort"
 )
 
 type MatchesReport map[string]MatchReport
 
+type PlayerNames []string
+
 type MatchReport struct {
-	Players      []string                `json:"players"`
+	Players      PlayerNames             `json:"players"`
 	TotalKills   int                     `json:"total_kills"`
 	Kills        map[string]int          `json:"kills"`
 	KillsByMeans map[game.DeathCause]int `json:"kills_by_means"`
@@ -22,13 +25,14 @@ func NewMatchReport(match *game.Match) MatchReport {
 	}
 }
 
-func getPlayerNames(match *game.Match) []string {
-	playerNames := make([]string, len(match.Players))
+func getPlayerNames(match *game.Match) PlayerNames {
+	playerNames := make(PlayerNames, len(match.Players))
 	index := 0
 	for name, _ := range match.Players {
 		playerNames[index] = name
 		index++
 	}
+	sort.Sort(playerNames)
 	return playerNames
 }
 
@@ -47,4 +51,18 @@ func countKillsByDeathCause(match *game.Match) map[game.DeathCause]int {
 		killsByDeathScore[kill.Cause]++
 	}
 	return killsByDeathScore
+}
+
+func (ref PlayerNames) Len() int {
+	return len(ref)
+}
+
+func (ref PlayerNames) Less(i, j int) bool {
+	return ref[i] < ref[j]
+}
+
+func (ref PlayerNames) Swap(i, j int) {
+	tmp := ref[i]
+	ref[i] = ref[j]
+	ref[j] = tmp
 }
