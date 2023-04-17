@@ -42,13 +42,13 @@ func (ref Log) ClientUserinfoChanged() (clientID int, clientName string) {
 	return
 }
 
-func (ref Log) Kill() (killer, killed, deathCause string) {
+func (ref Log) Kill() (killerName, killedName, deathCause string) {
 	subMatches := killLogRegex.FindStringSubmatch(ref.Message)
 	if subMatches == nil {
 		return
 	}
-	killer = subMatches[1]
-	killed = subMatches[2]
+	killerName = subMatches[1]
+	killedName = subMatches[2]
 	deathCause = subMatches[3]
 	return
 }

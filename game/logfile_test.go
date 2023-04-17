@@ -1,33 +1,34 @@
-package game
+package game_test
 
 import (
+	"github.com/ggpalacio/quake-game-log-analytics/game"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 )
 
 func TestNewLogFile(t *testing.T) {
-	logFile, err := NewLogFile("../resources/valid_game.log")
+	logFile, err := game.NewLogFile("../resources/valid_game.log")
 	assert.NotNil(t, logFile)
 	assert.NoError(t, err)
 
-	logFile, err = NewLogFile("../resources/not_found.log")
+	logFile, err = game.NewLogFile("../resources/not_found.log")
 	assert.Nil(t, logFile)
 	assert.ErrorIs(t, err, os.ErrNotExist)
 
-	logFile, err = NewLogFile("../resources/invalid_format.log")
+	logFile, err = game.NewLogFile("../resources/invalid_format.log")
 	assert.Nil(t, logFile)
 	assert.EqualError(t, err, "invalid log format at line 6: 2023-04-16 DEBUG invalid log")
 }
 
 func TestLogLine_IsInitGame(t *testing.T) {
-	logFile, err := NewLogFile("../resources/valid_game.log")
+	logFile, err := game.NewLogFile("../resources/valid_game.log")
 	assert.NoError(t, err)
 	assert.True(t, logFile.Logs[0].IsInitGame())
 }
 
 func TestLogLine_ClientUserinfoChanged(t *testing.T) {
-	logFile, err := NewLogFile("../resources/valid_game.log")
+	logFile, err := game.NewLogFile("../resources/valid_game.log")
 	assert.NoError(t, err)
 
 	clientID, clientName := logFile.Logs[1].ClientUserinfoChanged()
@@ -40,7 +41,7 @@ func TestLogLine_ClientUserinfoChanged(t *testing.T) {
 }
 
 func TestLogLine_Kill(t *testing.T) {
-	logFile, err := NewLogFile("../resources/valid_game.log")
+	logFile, err := game.NewLogFile("../resources/valid_game.log")
 	assert.NoError(t, err)
 
 	killer, killed, deathCause := logFile.Logs[6].Kill()

@@ -1,13 +1,14 @@
-package game
+package game_test
 
 import (
+	"github.com/ggpalacio/quake-game-log-analytics/game"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestNewReport(t *testing.T) {
-	logFile := &LogFile{
-		Logs: []Log{
+	logFile := &game.LogFile{
+		Logs: []game.Log{
 			{"20:37", `ShutdownGame:`},
 			{"20:37", `InitGame: \sv_floodProtect\1\sv_maxPing\0\sv_minPing\0\sv_maxRate\10000\sv_minRate\0\sv_hostname\Code Miner Server\g_gametype\0\sv_privateClients\2\sv_maxclients\16\sv_allowDownload\0\bot_minplayers\0\dmflags\0\fraglimit\20\timelimit\15\g_maxGameClients\0\capturelimit\8\version\ioq3 1.36 linux-x86_64 Apr 12 2009\protocol\68\mapname\q3dm17\gamename\baseq3\g_needpass\0`},
 			{"20:38", `ClientUserinfoChanged: 2 n\Isgalamido\t\0\model\uriel/zael\hmodel\uriel/zael\g_redteam\\g_blueteam\\c1\5\c2\5\hc\100\w\0\l\0\tt\0\tl\0`},
@@ -29,16 +30,16 @@ func TestNewReport(t *testing.T) {
 		},
 	}
 
-	report := NewReport(logFile)
+	report := game.NewReport(logFile)
 	assert.Len(t, report, 1)
 
-	match := report["game_001"]
-	assert.Equal(t, []string{"Isgalamido", "Dono da Bola", "Mocinha"}, match.Players)
-	assert.Equal(t, -9, match.Kills["Isgalamido"])
-	assert.Zero(t, match.Kills["Dono da Bola"])
-	assert.Zero(t, match.Kills["Mocinha"])
-	assert.Equal(t, 13, match.TotalKills)
-	assert.Equal(t, 9, match.KillsByMeans["MOD_TRIGGER_HURT"])
-	assert.Equal(t, 3, match.KillsByMeans["MOD_ROCKET_SPLASH"])
-	assert.Equal(t, 1, match.KillsByMeans["MOD_FALLING"])
+	matchReport := report["game_001"].(game.MatchReport)
+	assert.Len(t, matchReport.Players, 3)
+	assert.Equal(t, -9, matchReport.Kills["Isgalamido"])
+	assert.Zero(t, matchReport.Kills["Dono da Bola"])
+	assert.Zero(t, matchReport.Kills["Mocinha"])
+	assert.Equal(t, 13, matchReport.TotalKills)
+	assert.Equal(t, 9, matchReport.KillsByMeans["MOD_TRIGGER_HURT"])
+	assert.Equal(t, 3, matchReport.KillsByMeans["MOD_ROCKET_SPLASH"])
+	assert.Equal(t, 1, matchReport.KillsByMeans["MOD_FALLING"])
 }
