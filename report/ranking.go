@@ -17,20 +17,6 @@ type PlayerScore struct {
 
 type Ranking []PlayerScore
 
-func (ref Ranking) Len() int {
-	return len(ref)
-}
-
-func (ref Ranking) Less(i, j int) bool {
-	return ref[i].Score > ref[j].Score
-}
-
-func (ref Ranking) Swap(i, j int) {
-	tmp := ref[i]
-	ref[i] = ref[j]
-	ref[j] = tmp
-}
-
 type ScoreByPlayer map[string]int
 
 func (ref *RankingReport) AddPlayerScore(playerName string, score int) {
@@ -57,7 +43,7 @@ func (ref *RankingReport) GetRanking() Ranking {
 	return ranking
 }
 
-func (ref *RankingReport) MarshalJSON() ([]byte, error) {
+func (ref RankingReport) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString("{")
 
@@ -70,4 +56,18 @@ func (ref *RankingReport) MarshalJSON() ([]byte, error) {
 
 	buf.WriteString("}")
 	return buf.Bytes(), nil
+}
+
+func (ref Ranking) Len() int {
+	return len(ref)
+}
+
+func (ref Ranking) Less(i, j int) bool {
+	return ref[i].Score > ref[j].Score
+}
+
+func (ref Ranking) Swap(i, j int) {
+	tmp := ref[i]
+	ref[i] = ref[j]
+	ref[j] = tmp
 }
