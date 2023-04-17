@@ -9,7 +9,7 @@ import (
 
 func TestRankingReport_GetRanking(t *testing.T) {
 	rankingReport := new(report.RankingReport)
-	rankingReport.AddPlayersScore(report.ScoreByPlayer{
+	rankingReport.AddPlayersScore(report.PlayersScore{
 		"foo": 100,
 		"bar": 80,
 		"baz": 120,

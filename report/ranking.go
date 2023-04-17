@@ -7,7 +7,7 @@ import (
 )
 
 type RankingReport struct {
-	scoreByPlayer ScoreByPlayer
+	playersScore PlayersScore
 }
 
 type PlayerScore struct {
@@ -17,25 +17,25 @@ type PlayerScore struct {
 
 type Ranking []PlayerScore
 
-type ScoreByPlayer map[string]int
+type PlayersScore map[string]int
 
-func (ref *RankingReport) AddPlayerScore(playerName string, score int) {
-	if ref.scoreByPlayer == nil {
-		ref.scoreByPlayer = make(map[string]int)
+func (ref *RankingReport) AddPlayerScore(player string, score int) {
+	if ref.playersScore == nil {
+		ref.playersScore = make(map[string]int)
 	}
-	ref.scoreByPlayer[playerName] += score
+	ref.playersScore[player] += score
 }
 
-func (ref *RankingReport) AddPlayersScore(scoreByPlayer ScoreByPlayer) {
-	for playerName, score := range scoreByPlayer {
-		ref.AddPlayerScore(playerName, score)
+func (ref *RankingReport) AddPlayersScore(playersScore PlayersScore) {
+	for player, score := range playersScore {
+		ref.AddPlayerScore(player, score)
 	}
 }
 
 func (ref *RankingReport) GetRanking() Ranking {
 	var index int
-	ranking := make(Ranking, len(ref.scoreByPlayer))
-	for player, score := range ref.scoreByPlayer {
+	ranking := make(Ranking, len(ref.playersScore))
+	for player, score := range ref.playersScore {
 		ranking[index] = PlayerScore{player, score}
 		index++
 	}
