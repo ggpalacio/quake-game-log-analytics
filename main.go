@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/ggpalacio/quake-game-log-analytics/game"
+	"github.com/ggpalacio/quake-game-log-analytics/report"
 	"os"
 	"strings"
 )
@@ -30,7 +31,7 @@ func main() {
 		return
 	}
 
-	report := game.NewReport(logFile)
+	report := report.NewReport(logFile)
 	reportJson, _ := json.MarshalIndent(report, "", "  ")
 	if reportFilePath != "" {
 		output, err := os.Create(reportFilePath)

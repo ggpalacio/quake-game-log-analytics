@@ -1,7 +1,8 @@
-package game_test
+package report_test
 
 import (
 	"github.com/ggpalacio/quake-game-log-analytics/game"
+	"github.com/ggpalacio/quake-game-log-analytics/report"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -30,10 +31,10 @@ func TestNewReport(t *testing.T) {
 		},
 	}
 
-	report := game.NewReport(logFile)
-	assert.Len(t, report, 1)
+	report := report.NewReport(logFile)
+	assert.Len(t, report.Matches, 1)
 
-	matchReport := report["game_001"].(game.MatchReport)
+	matchReport := report.Matches[0]
 	assert.Len(t, matchReport.Players, 3)
 	assert.Equal(t, -9, matchReport.Kills["Isgalamido"])
 	assert.Zero(t, matchReport.Kills["Dono da Bola"])

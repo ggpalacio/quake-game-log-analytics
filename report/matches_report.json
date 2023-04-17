@@ -1,0 +1,34 @@
+{
+  "game-1": {
+    "players": [
+      "foo",
+      "bar",
+      "baz"
+    ],
+    "total_kills": 10,
+    "kills": {
+      "bar": 3,
+      "baz": 2,
+      "foo": 5
+    },
+    "kills_by_means": {
+      "MOD_MACHINEGUN": 3,
+      "MOD_SHOTGUN": 7
+    }
+  },
+  "game-2": {
+    "players": [
+      "foo",
+      "bar"
+    ],
+    "total_kills": 12,
+    "kills": {
+      "bar": 7,
+      "foo": 5
+    },
+    "kills_by_means": {
+      "MOD_CHAINGUN": 4,
+      "MOD_RAILGUN": 8
+    }
+  }
+}
